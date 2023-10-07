@@ -1,6 +1,5 @@
 const clothingItem = require("../models/clothingItem");
 const {
-  ERROR_CODE_200,
   ERROR_CODE_400,
   ERROR_CODE_404,
   ERROR_CODE_500,
@@ -11,7 +10,7 @@ const createItem = (req, res) => {
 
   clothingItem
     .create({ name, weather, imageUrl, owner: req.user._id })
-    .then((item) => res.status(ERROR_CODE_200).json({ data: item }))
+    .then((item) => res.json({ data: item }))
     .catch((error) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
@@ -29,7 +28,7 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   clothingItem
     .find({})
-    .then((items) => res.status(ERROR_CODE_200).json(items))
+    .then((items) => res.json(items))
     .catch((error) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
@@ -51,7 +50,7 @@ const deleteItem = (req, res) => {
   clothingItem
     .findByIdAndDelete(itemId)
     .orFail(new Error("Item not found"))
-    .then(() => res.status(ERROR_CODE_200).send({}))
+    .then(() => res.send({}))
     .catch((error) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
@@ -59,7 +58,8 @@ const deleteItem = (req, res) => {
 
       if (error.message === "Item not found") {
         return res.status(ERROR_CODE_404).json({ message: error.message });
-      } else if (error.name === "CastError") {
+      }
+      if (error.name === "CastError") {
         return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
       }
 
@@ -78,7 +78,7 @@ const likeItem = (req, res) => {
   clothingItem
     .findByIdAndUpdate(itemId, { $addToSet: { likes: userId } }, { new: true })
     .orFail(new Error("Item not found"))
-    .then((item) => res.status(ERROR_CODE_200).json(item))
+    .then((item) => res.json(item))
     .catch((error) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
@@ -86,7 +86,8 @@ const likeItem = (req, res) => {
 
       if (error.message === "Item not found") {
         return res.status(ERROR_CODE_404).json({ message: error.message });
-      } else if (error.name === "CastError") {
+      }
+      if (error.name === "CastError") {
         return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
       }
 
@@ -105,7 +106,7 @@ const dislikeItem = (req, res) => {
   clothingItem
     .findByIdAndUpdate(itemId, { $pull: { likes: userId } }, { new: true })
     .orFail(new Error("Item not found"))
-    .then((item) => res.status(ERROR_CODE_200).json(item))
+    .then((item) => res.json(item))
     .catch((error) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
@@ -113,7 +114,8 @@ const dislikeItem = (req, res) => {
 
       if (error.message === "Item not found") {
         return res.status(ERROR_CODE_404).json({ message: error.message });
-      } else if (error.name === "CastError") {
+      }
+      if (error.name === "CastError") {
         return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
       }
 

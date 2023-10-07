@@ -1,5 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
+const router = require("./routes");
 
 const { PORT = 3001 } = process.env;
 const app = express();
@@ -11,6 +14,16 @@ mongoose
 
 app.use(express.json());
 
+// Security headers
+app.use(helmet());
+
+// Rate limit to all requests
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
+
 app.use((req, res, next) => {
   req.user = {
     _id: "651f98501f2952157b09cd18",
@@ -18,7 +31,6 @@ app.use((req, res, next) => {
   next();
 });
 
-const router = require("./routes");
 app.use(router);
 
 app.listen(PORT, () => {

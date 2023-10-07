@@ -1,6 +1,5 @@
 const User = require("../models/users");
 const {
-  ERROR_CODE_200,
   ERROR_CODE_400,
   ERROR_CODE_404,
   ERROR_CODE_500,
@@ -8,7 +7,7 @@ const {
 
 const getUsers = (req, res) => {
   User.find()
-    .then((users) => res.status(ERROR_CODE_200).json(users))
+    .then((users) => res.json(users))
     .catch(() => {
       return res
         .status(ERROR_CODE_500)
@@ -24,7 +23,7 @@ const getUser = (req, res) => {
       if (!user) {
         return res.status(ERROR_CODE_404).json({ message: "User not found" });
       }
-      return res.status(ERROR_CODE_200).json(user);
+      return res.json(user);
     })
     .catch((error) => {
       if (error.name === "CastError") {
@@ -43,7 +42,7 @@ const createUser = (req, res) => {
 
   newUser
     .save()
-    .then((user) => res.status(ERROR_CODE_200).json(user))
+    .then((user) => res.json(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(ERROR_CODE_400).json({ message: err.message });
