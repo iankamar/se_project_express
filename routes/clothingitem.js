@@ -1,28 +1,43 @@
 const router = require("express").Router();
+const { ERROR_CODE_404 } = require("../utils/errors");
 
 const {
   createItem,
   getItems,
   updateItem,
   deleteItem,
+  likeItem,
+  dislikeItem,
 } = require("../controllers/clothingItem");
 
-//CRUD
+// CRUD
 
-//Create
+// Create
 
 router.post("/", createItem);
 
-//Read
+// Read
 
 router.get("/", getItems);
 
-//Update
+// Update
 
 router.put("/:itemId", updateItem);
 
-//Delete
+// Delete
 
 router.delete("/:itemId", deleteItem);
+
+// Like an item
+router.put("/:itemId/likes", likeItem);
+
+// Unlike an item
+router.delete("/:itemId/likes", dislikeItem);
+
+// Handling non-existent resources
+
+router.use((req, res) => {
+  res.status(ERROR_CODE_404).send({ message: "Router not found" });
+});
 
 module.exports = router;
