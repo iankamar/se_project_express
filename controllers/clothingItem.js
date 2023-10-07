@@ -46,7 +46,7 @@ const getItems = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  const { itemId } = req.params;
+  const itemId = req.params;
 
   clothingItem
     .findByIdAndDelete(itemId)
@@ -70,8 +70,8 @@ const deleteItem = (req, res) => {
 };
 
 const likeItem = (req, res) => {
-  const { itemId } = req.params;
-  const { userId } = req.user._id;
+  const itemId = req.params;
+  const userId = req.user._id;
   console.log(itemId);
   console.log(userId);
 
@@ -97,8 +97,8 @@ const likeItem = (req, res) => {
 };
 
 const dislikeItem = (req, res) => {
-  const { itemId } = req.params;
-  const { userId } = req.user._id;
+  const itemId = req.params;
+  const userId = req.user._id;
   console.log(itemId);
   console.log(userId);
 

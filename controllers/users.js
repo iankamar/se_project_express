@@ -20,12 +20,14 @@ const getUser = (req, res) => {
   const { id } = req.params;
 
   User.findById(id)
-    .orFail(new Error("User not found"))
-    .then((user) => res.status(ERROR_CODE_200).json(user))
+    .then((user) => {
+      if (!user) {
+        return res.status(ERROR_CODE_404).json({ message: "User not found" });
+      }
+      return res.status(ERROR_CODE_200).json(user);
+    })
     .catch((error) => {
-      if (error.message === "User not found") {
-        return res.status(ERROR_CODE_404).json({ message: error.message });
-      } else if (error.name === "CastError") {
+      if (error.name === "CastError") {
         return res.status(ERROR_CODE_400).json({ message: "Invalid id" });
       }
       return res
