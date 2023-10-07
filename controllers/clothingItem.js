@@ -1,20 +1,25 @@
 const clothingItem = require("../models/clothingItem");
 const {
   ERROR_CODE_200,
+  ERROR_CODE_400,
   ERROR_CODE_404,
   ERROR_CODE_500,
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
-  const { name, weather, imageURL } = req.body;
+  const { name, weather, imageUrl } = req.body;
 
   clothingItem
-    .create({ name, weather, imageURL })
+    .create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => res.status(ERROR_CODE_200).json({ data: item }))
     .catch((error) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
       );
+
+      if (error.name === "ValidationError") {
+        return res.status(ERROR_CODE_400).json({ message: error.message });
+      }
       return res
         .status(ERROR_CODE_500)
         .json({ message: "An error occurred on the server" });
@@ -24,36 +29,16 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   clothingItem
     .find({})
-    .orFail(new Error("No items found"))
     .then((items) => res.status(ERROR_CODE_200).json(items))
     .catch((error) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
       );
-      if (error.message === "No items found") {
-        return res.status(ERROR_CODE_404).json({ message: error.message });
-      }
-      return res
-        .status(ERROR_CODE_500)
-        .json({ message: "An error occurred on the server" });
-    });
-};
 
-const updateItem = (req, res) => {
-  const { itemId } = req.params;
-  const { imageURL } = req.body;
-
-  clothingItem
-    .findByIdAndUpdate(itemId, { $set: { imageURL } }, { new: true })
-    .orFail(new Error("Item not found"))
-    .then((item) => res.status(ERROR_CODE_200).json({ data: item }))
-    .catch((error) => {
-      console.error(
-        `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
-      );
-      if (error.message === "Item not found") {
-        return res.status(ERROR_CODE_404).json({ message: error.message });
+      if (error.name === "CastError") {
+        return res.status(ERROR_CODE_400).json({ message: error.message });
       }
+
       return res
         .status(ERROR_CODE_500)
         .json({ message: "An error occurred on the server" });
@@ -71,9 +56,13 @@ const deleteItem = (req, res) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
       );
+
       if (error.message === "Item not found") {
         return res.status(ERROR_CODE_404).json({ message: error.message });
+      } else if (error.name === "CastError") {
+        return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
       }
+
       return res
         .status(ERROR_CODE_500)
         .json({ message: "An error occurred on the server" });
@@ -82,7 +71,7 @@ const deleteItem = (req, res) => {
 
 const likeItem = (req, res) => {
   const { itemId } = req.params;
-  const { userId } = req.body;
+  const { userId } = req.user._id;
   console.log(itemId);
   console.log(userId);
 
@@ -94,9 +83,13 @@ const likeItem = (req, res) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
       );
+
       if (error.message === "Item not found") {
         return res.status(ERROR_CODE_404).json({ message: error.message });
+      } else if (error.name === "CastError") {
+        return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
       }
+
       return res
         .status(ERROR_CODE_500)
         .json({ message: "An error occurred on the server" });
@@ -105,7 +98,7 @@ const likeItem = (req, res) => {
 
 const dislikeItem = (req, res) => {
   const { itemId } = req.params;
-  const { userId } = req.body;
+  const { userId } = req.user._id;
   console.log(itemId);
   console.log(userId);
 
@@ -114,9 +107,16 @@ const dislikeItem = (req, res) => {
     .orFail(new Error("Item not found"))
     .then((item) => res.status(ERROR_CODE_200).json(item))
     .catch((error) => {
+      console.error(
+        `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
+      );
+
       if (error.message === "Item not found") {
         return res.status(ERROR_CODE_404).json({ message: error.message });
+      } else if (error.name === "CastError") {
+        return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
       }
+
       return res
         .status(ERROR_CODE_500)
         .json({ message: "An error occurred on the server" });
@@ -126,7 +126,6 @@ const dislikeItem = (req, res) => {
 module.exports = {
   createItem,
   getItems,
-  updateItem,
   deleteItem,
   likeItem,
   dislikeItem,

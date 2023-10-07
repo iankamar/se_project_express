@@ -4,7 +4,6 @@ const { ERROR_CODE_404 } = require("../utils/errors");
 const {
   createItem,
   getItems,
-  updateItem,
   deleteItem,
   likeItem,
   dislikeItem,
@@ -19,10 +18,6 @@ router.post("/", createItem);
 // Read
 
 router.get("/", getItems);
-
-// Update
-
-router.put("/:itemId", updateItem);
 
 // Delete
 
