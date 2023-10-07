@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const users = require("./users");
 // eslint-disable-next-line camelcase
-const clothingItem = require("./clothingItem");
+const clothingItem = require("./clothingitem");
 const { ERROR_CODE_400 } = require("../utils/errors");
 
 router.use("/users", users);
