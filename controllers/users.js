@@ -8,11 +8,11 @@ const {
 const getUsers = (req, res) => {
   User.find()
     .then((users) => res.json(users))
-    .catch(() => {
-      return res
+    .catch(() =>
+      res
         .status(ERROR_CODE_500)
-        .json({ message: "An error occurred on the server" });
-    });
+        .json({ message: "An error occurred on the server" }),
+    );
 };
 
 const getUser = (req, res) => {

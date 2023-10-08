@@ -45,12 +45,12 @@ const getItems = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  const itemId = req.params;
+  const { itemId } = req.params;
 
   clothingItem
     .findByIdAndDelete(itemId)
     .orFail(new Error("Item not found"))
-    .then(() => res.send({}))
+    .then(() => res.send({ message: "Item deleted" }))
     .catch((error) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
@@ -70,7 +70,7 @@ const deleteItem = (req, res) => {
 };
 
 const likeItem = (req, res) => {
-  const itemId = req.params;
+  const { itemId } = req.params;
   const userId = req.user._id;
   console.log(itemId);
   console.log(userId);
@@ -98,7 +98,7 @@ const likeItem = (req, res) => {
 };
 
 const dislikeItem = (req, res) => {
-  const itemId = req.params;
+  const { itemId } = req.params;
   const userId = req.user._id;
   console.log(itemId);
   console.log(userId);

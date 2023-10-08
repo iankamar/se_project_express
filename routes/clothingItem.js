@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const { ERROR_CODE_404 } = require("../utils/errors");
 
 const {
   createItem,
@@ -28,11 +27,5 @@ router.put("/:itemId/likes", likeItem);
 
 // Unlike an item
 router.delete("/:itemId/likes", dislikeItem);
-
-// Handling non-existent resources
-
-router.use((req, res) => {
-  res.status(ERROR_CODE_404).send({ message: "Router not found" });
-});
 
 module.exports = router;
