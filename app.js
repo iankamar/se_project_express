@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
-const router = require("./routes");
+// const router = require("./routes");
 const cors = require("cors");
 
 const { PORT = 3001 } = process.env;
@@ -34,16 +34,7 @@ app.use(limiter);
 // next();
 // });
 
-app.use(router);
-
-app.listen(PORT, () => {
-  console.log(`App listening at port ${PORT}`);
-});
-
-app.post("/signin", login);
-app.post("/signup", createUser);
-
-app.use(router);
+// app.use(router);
 
 app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);
