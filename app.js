@@ -3,9 +3,12 @@ const mongoose = require("mongoose");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const router = require("./routes");
+const cors = require("cors");
 
 const { PORT = 3001 } = process.env;
 const app = express();
+
+app.use(cors());
 
 mongoose
   .connect("mongodb://localhost:27017/wtwr_db")
@@ -24,12 +27,21 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "651f98501f2952157b09cd18",
-  };
-  next();
+// app.use((req, res, next) => {
+// req.user = {
+//   _id: "651f98501f2952157b09cd18",
+// };
+// next();
+// });
+
+app.use(router);
+
+app.listen(PORT, () => {
+  console.log(`App listening at port ${PORT}`);
 });
+
+app.post("/signin", login);
+app.post("/signup", createUser);
 
 app.use(router);
 
