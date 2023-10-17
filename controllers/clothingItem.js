@@ -44,41 +44,29 @@ const getItems = (req, res) => {
     });
 };
 
-const deleteItem = async (req, res) => {
+const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
-  try {
-    // Find the item by its id
-    const item = await clothingItem.findById(itemId);
+  clothingItem
+    .findByIdAndDelete(itemId)
+    .orFail(new Error("Item not found"))
+    .then(() => res.send({ message: "Item deleted" }))
+    .catch((error) => {
+      console.error(
+        `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
+      );
 
-    if (!item) {
-      return res.status(ERROR_CODE_404).json({ message: "Item not found" });
-    }
+      if (error.message === "Item not found") {
+        return res.status(ERROR_CODE_404).json({ message: error.message });
+      }
+      if (error.name === "CastError") {
+        return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
+      }
 
-    // Check if the logged-in user is the owner of the item
-    if (item.owner.toString() !== req.user._id) {
-      return res.status(403).json({
-        message: "Forbidden: You do not have permission to delete this item",
-      });
-    }
-
-    // If the user is the owner, delete the item
-    await item.remove();
-
-    res.json({ message: "Item deleted successfully" });
-  } catch (e) {
-    console.error(
-      `Error ${e.name} with the message ${e.message} has occurred while executing the code`,
-    );
-
-    if (e.name === "CastError") {
-      return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
-    }
-
-    return res
-      .status(ERROR_CODE_500)
-      .json({ message: "An error occurred on the server" });
-  }
+      return res
+        .status(ERROR_CODE_500)
+        .json({ message: "An error occurred on the server" });
+    });
 };
 
 const likeItem = (req, res) => {

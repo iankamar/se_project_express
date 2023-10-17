@@ -1,16 +1,33 @@
 const router = require("express").Router();
-const auth = require("../middlewares/auth");
-// const user = require("./users");
+const users = require("./users");
 const clothingItem = require("./clothingItem");
 const { ERROR_CODE_400 } = require("../utils/errors");
-const userRouter = require("./users");
+
+router.use("/users", users);
+router.use("/items", clothingItem);
+
+// Handling non-existent resources
+
+router.use((req, res) => {
+  res.status(ERROR_CODE_400).send({
+    message: `The requested resource ${req.path} does not exist on this server.`,
+  });
+});
+
+module.exports = router;
+
+/*
+const router = require("express").Router();
+const auth = require("../middlewares/auth");
+const user = require("./users");
+const clothingItem = require("./clothingItem");
+const { ERROR_CODE_400 } = require("../utils/errors");
 
 const login = require("../controllers/users");
 const { createUser } = require("../controllers/users");
 
-// router.use("/users", user);
+router.user("/users", user);
 router.use("/items", clothingItem);
-router.use("users", auth, userRouter);
 router.post("/signin", login);
 router.post("/signup", createUser);
 
@@ -23,3 +40,4 @@ router.use(auth, (req, res) => {
 });
 
 module.exports = router;
+*/
