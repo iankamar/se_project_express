@@ -3,15 +3,16 @@ const auth = require("../middlewares/auth");
 // const user = require("./users");
 const clothingItem = require("./clothingItem");
 const { ERROR_CODE_400 } = require("../utils/errors");
+const userRouter = require("./users");
 
 const login = require("../controllers/users");
 const { createUser } = require("../controllers/users");
 
 // router.use("/users", user);
 router.use("/items", clothingItem);
+router.use("users", auth, userRouter);
 router.post("/signin", login);
 router.post("/signup", createUser);
-router.use(auth);
 
 // Handling non-existent resources
 

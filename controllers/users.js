@@ -125,8 +125,8 @@ const login = (req, res) => {
       });
       res.send({ token });
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
+    .catch((error) => {
+      res.status(401).send({ message: error.message });
     });
 };
 
