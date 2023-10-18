@@ -43,45 +43,47 @@ const getUser = (req, res) => {
 
 const signup = (req, res) => {
   const { name, avatar, email, password } = req.body;
+  if (!email) {
+    res.status(ERROR_CODE_400).json({ message: "Email is required" });
+  } else {
+    User.findOne({ email })
+      .select("+password")
+      .then((user) => {
+        if (user) {
+          res
+            .status(ERROR_CODE_409)
+            .json({ message: "User with this email already exists" });
+        } else {
+          bcrypt.hash(password, 10).then((hash) => {
+            const newUser = new User({ name, avatar, email, password: hash });
 
-  User.findOne({ email })
-    .select("+password")
-    .then((user) => {
-      if (user) {
-        return res
-          .status(ERROR_CODE_409)
-          .json({ message: "User with this email already exists" });
-      }
-
-      return bcrypt.hash(password, 10).then((hash) => {
-        const newUser = new User({ name, avatar, email, password: hash });
-
-        return newUser
-          .save()
-          .then(() =>
-            res.json({
-              name: newUser.name,
-              avatar: newUser.avatar,
-              email: newUser.email,
-            }),
-          )
-          .catch((error) => {
-            if (error.name === "ValidationError") {
-              return res
-                .status(ERROR_CODE_400)
-                .json({ message: error.message });
-            }
-            return res
-              .status(ERROR_CODE_500)
-              .json({ message: "An error occurred on the server" });
+            newUser
+              .save()
+              .then(() =>
+                res.json({
+                  name: newUser.name,
+                  avatar: newUser.avatar,
+                  email: newUser.email,
+                }),
+              )
+              .catch((error) => {
+                if (error.name === "ValidationError") {
+                  res.status(ERROR_CODE_400).json({ message: error.message });
+                } else {
+                  res
+                    .status(ERROR_CODE_500)
+                    .json({ message: "An error occurred on the server" });
+                }
+              });
           });
-      });
-    })
-    .catch(() =>
-      res
-        .status(ERROR_CODE_500)
-        .json({ message: "An error occurred on the server" }),
-    );
+        }
+      })
+      .catch(() =>
+        res
+          .status(ERROR_CODE_500)
+          .json({ message: "An error occurred on the server" }),
+      );
+  }
 };
 
 const getCurrentUser = async (req, res) => {
