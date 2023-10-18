@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -28,13 +29,27 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: [8, "Password must be at least 8 characters"],
-    validate: {
-      validator: (v) => v.length >= 8,
-      message: "Please enter a password with at least 8 characters",
-    },
     select: false,
   },
 });
+
+userSchema.statics.findUserByCredentials = function findUserByCredentials(
+  email,
+  password,
+) {
+  return this.findOne({ email })
+    .select("+password")
+    .then((user) => {
+      if (!user) {
+        throw new Error("Incorrect email or password");
+      }
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          throw new Error("Incorrect email or password");
+        }
+        return user;
+      });
+    });
+};
 
 module.exports = mongoose.model("User", userSchema);

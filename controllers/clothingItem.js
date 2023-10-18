@@ -48,8 +48,13 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
   clothingItem
-    .findByIdAndDelete(itemId)
-    .orFail(new Error("Item not found"))
+    .findById(itemId)
+    .then((item) => {
+      if (!item) {
+        throw new Error("Item not found");
+      }
+      return clothingItem.deleteOne({ _id: itemId });
+    })
     .then(() => res.send({ message: "Item deleted" }))
     .catch((error) => {
       console.error(

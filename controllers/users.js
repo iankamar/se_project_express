@@ -1,9 +1,12 @@
-const User = require("../models/users");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const User = require("../models/users");
+
 const {
   ERROR_CODE_400,
+  ERROR_CODE_401,
   ERROR_CODE_404,
+  ERROR_CODE_409,
   ERROR_CODE_500,
 } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
@@ -38,7 +41,7 @@ const getUser = (req, res) => {
     });
 };
 
-const createUser = (req, res) => {
+const signup = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
   User.findOne({ email })
@@ -46,19 +49,27 @@ const createUser = (req, res) => {
     .then((user) => {
       if (user) {
         return res
-          .status(ERROR_CODE_400)
+          .status(ERROR_CODE_409)
           .json({ message: "User with this email already exists" });
       }
 
-      bcrypt.hash(password, 10).then((hash) => {
+      return bcrypt.hash(password, 10).then((hash) => {
         const newUser = new User({ name, avatar, email, password: hash });
 
-        newUser
+        return newUser
           .save()
-          .then((user) => res.json(user))
-          .catch((err) => {
-            if (err.name === "ValidationError") {
-              return res.status(ERROR_CODE_400).json({ message: err.message });
+          .then(() =>
+            res.json({
+              name: user.name,
+              avatar: user.avatar,
+              email: user.email,
+            }),
+          )
+          .catch((error) => {
+            if (error.name === "ValidationError") {
+              return res
+                .status(ERROR_CODE_400)
+                .json({ message: error.message });
             }
             return res
               .status(ERROR_CODE_500)
@@ -79,9 +90,9 @@ const getCurrentUser = async (req, res) => {
     if (!user) {
       return res.status(ERROR_CODE_404).json({ message: "User not found" });
     }
-    res.json(user);
+    return res.json(user);
   } catch (e) {
-    res
+    return res
       .status(ERROR_CODE_500)
       .json({ message: "An error occurred on the server" });
   }
@@ -89,32 +100,38 @@ const getCurrentUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "email", "password", "avatar"];
+  const allowedUpdates = ["name", "avatar"];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update),
   );
 
   if (!isValidOperation) {
-    return res.status(400).json({ message: "Invalid updates!" });
+    return res.status(ERROR_CODE_400).json({ message: "Invalid updates!" });
   }
 
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findByIdAndUpdate(req.user._id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(ERROR_CODE_404).json({ message: "User not found" });
     }
 
-    updates.forEach((update) => (user[update] = req.body[update]));
+    updates.forEach((update) => {
+      user[update] = req.body[update];
+    });
     await user.save();
 
-    res.json(user);
+    return res.json(user);
   } catch (e) {
-    res.status(500).json({ message: "An error occurred on the server" });
+    return res
+      .status(ERROR_CODE_500)
+      .json({ message: "An error occurred on the server" });
   }
 };
 
-// login controller
 const login = (req, res) => {
   const { email, password } = req.body;
 
@@ -126,15 +143,15 @@ const login = (req, res) => {
       res.send({ token });
     })
     .catch((error) => {
-      res.status(401).send({ message: error.message });
+      res.status(ERROR_CODE_401).send({ message: error.message });
     });
 };
 
 module.exports = {
   getUsers,
   getUser,
-  createUser,
-  login,
+  signup,
   getCurrentUser,
   updateUser,
+  login,
 };
