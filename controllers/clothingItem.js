@@ -46,6 +46,7 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
+  const userId = req.user._id;
 
   clothingItem
     .findById(itemId)
@@ -53,6 +54,16 @@ const deleteItem = (req, res) => {
       if (!item) {
         throw new Error("Item not found");
       }
+
+      if (item.owner.toString() !== userId) {
+        return res
+          .status(403)
+          .json({
+            message:
+              "Forbidden: You do not have permission to delete this item",
+          });
+      }
+
       return clothingItem.deleteOne({ _id: itemId });
     })
     .then(() => res.send({ message: "Item deleted" }))

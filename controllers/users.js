@@ -60,9 +60,9 @@ const signup = (req, res) => {
           .save()
           .then(() =>
             res.json({
-              name: user.name,
-              avatar: user.avatar,
-              email: user.email,
+              name: newUser.name,
+              avatar: newUser.avatar,
+              email: newUser.email,
             }),
           )
           .catch((error) => {
