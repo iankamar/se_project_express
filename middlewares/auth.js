@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const { ERROR_CODE_401 } = require("../utils/errors");
 
-const authMiddleware = (req, res, next) => {
+const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
@@ -29,4 +29,4 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+module.exports = auth;

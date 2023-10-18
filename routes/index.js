@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const auth = require("../middlewares/auth");
 const users = require("./users");
 const clothingItem = require("./clothingItem");
 const { ERROR_CODE_400 } = require("../utils/errors");
@@ -7,8 +6,8 @@ const { ERROR_CODE_400 } = require("../utils/errors");
 const { login } = require("../controllers/users");
 const { signup } = require("../controllers/users");
 
-router.post("/signin", auth, login);
-router.post("/signup", auth, signup);
+router.post("/signin", login);
+router.post("/signup", signup);
 router.use("/users", users);
 router.use("/items", clothingItem);
 
