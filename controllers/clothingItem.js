@@ -1,6 +1,7 @@
 const clothingItem = require("../models/clothingItem");
 const {
   ERROR_CODE_400,
+  ERROR_CODE_403,
   ERROR_CODE_404,
   ERROR_CODE_500,
 } = require("../utils/errors");
@@ -56,12 +57,9 @@ const deleteItem = (req, res) => {
       }
 
       if (item.owner.toString() !== userId) {
-        return res
-          .status(403)
-          .json({
-            message:
-              "Forbidden: You do not have permission to delete this item",
-          });
+        return res.status(ERROR_CODE_403).json({
+          message: "Forbidden: You do not have permission to delete this item",
+        });
       }
 
       return clothingItem.deleteOne({ _id: itemId });
