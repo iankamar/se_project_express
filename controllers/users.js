@@ -101,16 +101,6 @@ const getCurrentUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "avatar"];
-  const isValidOperation = updates.every((update) =>
-    allowedUpdates.includes(update),
-  );
-
-  if (!isValidOperation) {
-    return res.status(ERROR_CODE_400).json({ message: "Invalid updates!" });
-  }
-
   try {
     const user = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
@@ -120,11 +110,6 @@ const updateUser = async (req, res) => {
     if (!user) {
       return res.status(ERROR_CODE_404).json({ message: "User not found" });
     }
-
-    updates.forEach((update) => {
-      user[update] = req.body[update];
-    });
-    await user.save();
 
     return res.json(user);
   } catch (e) {
