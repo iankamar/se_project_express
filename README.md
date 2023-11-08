@@ -27,6 +27,3 @@ Use the following commands to run the project:
 - `npm run start` — Launches the server.
 - `npm run dev` — Launches the server with the hot reload feature.
 
-## Testing
-
-Before committing your code, edit the `sprint.txt` file in the root folder. This file should contain the number of the sprint you're currently working on. For example, if you're working on sprint 12, the `sprint.txt` file should contain '12'.
