@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const router = require("./routes");
+const cors = require("cors");
 
 const { PORT = 3001 } = process.env;
 const app = express();
@@ -13,6 +14,7 @@ mongoose
   .catch((e) => console.log("DB error", e));
 
 app.use(express.json());
+app.use(cors());
 
 // Security headers
 app.use(helmet());
