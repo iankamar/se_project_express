@@ -29,6 +29,7 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   clothingItem
     .find({})
+    .sort({ createdAt: -1 })
     .then((items) => res.json(items))
     .catch((error) => {
       console.error(
