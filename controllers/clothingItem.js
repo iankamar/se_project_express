@@ -7,10 +7,10 @@ const {
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
-  const { name, weather, imageUrl } = req.body;
+  const { name, weather, link } = req.body;
 
   clothingItem
-    .create({ name, weather, imageUrl, owner: req.user._id })
+    .create({ name, weather, link, owner: req.user._id })
     .then((item) => res.json({ data: item }))
     .catch((error) => {
       console.error(
