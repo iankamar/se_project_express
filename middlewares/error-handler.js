@@ -1,6 +1,8 @@
+const { InternalServerError } = require("../utils/errors");
+
 const errorHandler = (err, req, res, next) => {
   console.log("Middleware Error Handling");
-  const errorStatus = err.statusCode || 500;
+  const errorStatus = err.statusCode || InternalServerError;
   const errorMessage = err.message || "Something went wrong";
 
   res.status(errorStatus).json({
@@ -10,4 +12,5 @@ const errorHandler = (err, req, res, next) => {
     stack: process.env.NODE_ENV === "development" ? err.stack : {},
   });
 };
+
 module.exports = errorHandler;

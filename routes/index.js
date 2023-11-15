@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const users = require("./users");
 const clothingItem = require("./clothingItem");
-const { ERROR_CODE_404 } = require("../utils/errors");
+const { NotFoundError } = require("../utils/errors");
 
 const { login, signup } = require("../controllers/users");
 
@@ -11,7 +11,7 @@ router.use("/users", users);
 router.use("/items", clothingItem);
 
 router.use((req, res) => {
-  res.status(ERROR_CODE_404).send({
+  res.status(NotFoundError).send({
     message: `The requested resource ${req.path} does not exist on this server.`,
   });
 });

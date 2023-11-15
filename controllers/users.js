@@ -3,11 +3,11 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/users");
 
 const {
-  ERROR_CODE_400,
-  ERROR_CODE_401,
-  ERROR_CODE_404,
-  ERROR_CODE_409,
-  ERROR_CODE_500,
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError,
+  ConflictError,
+  InternalServerError,
 } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
@@ -16,7 +16,7 @@ const getUsers = (req, res) => {
     .then((users) => res.json(users))
     .catch(() =>
       res
-        .status(ERROR_CODE_500)
+        .status(InternalServerError)
         .json({ message: "An error occurred on the server" }),
     );
 };
@@ -27,16 +27,16 @@ const getUser = (req, res) => {
   User.findById(id)
     .then((user) => {
       if (!user) {
-        return res.status(ERROR_CODE_404).json({ message: "User not found" });
+        return res.status(NotFoundError).json({ message: "User not found" });
       }
       return res.json(user);
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        return res.status(ERROR_CODE_400).json({ message: "Invalid id" });
+        return res.status(BadRequestError).json({ message: "Invalid id" });
       }
       return res
-        .status(ERROR_CODE_500)
+        .status(InternalServerError)
         .json({ message: "An error occurred on the server" });
     });
 };
@@ -44,14 +44,14 @@ const getUser = (req, res) => {
 const signup = (req, res) => {
   const { name, avatar, email, password } = req.body;
   if (!email) {
-    res.status(ERROR_CODE_400).json({ message: "Email is required" });
+    res.status(BadRequestError).json({ message: "Email is required" });
   } else {
     User.findOne({ email })
       .select("+password")
       .then((user) => {
         if (user) {
           res
-            .status(ERROR_CODE_409)
+            .status(ConflictError)
             .json({ message: "User with this email already exists" });
         } else {
           bcrypt.hash(password, 10).then((hash) => {
@@ -68,10 +68,10 @@ const signup = (req, res) => {
               )
               .catch((error) => {
                 if (error.name === "ValidationError") {
-                  res.status(ERROR_CODE_400).json({ message: error.message });
+                  res.status(BadRequestError).json({ message: error.message });
                 } else {
                   res
-                    .status(ERROR_CODE_500)
+                    .status(InternalServerError)
                     .json({ message: "An error occurred on the server" });
                 }
               });
@@ -80,7 +80,7 @@ const signup = (req, res) => {
       })
       .catch(() =>
         res
-          .status(ERROR_CODE_500)
+          .status(InternalServerError)
           .json({ message: "An error occurred on the server" }),
       );
   }
@@ -90,12 +90,12 @@ const getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
-      return res.status(ERROR_CODE_404).json({ message: "User not found" });
+      return res.status(NotFoundError).json({ message: "User not found" });
     }
     return res.json(user);
   } catch (e) {
     return res
-      .status(ERROR_CODE_500)
+      .status(InternalServerError)
       .json({ message: "An error occurred on the server" });
   }
 };
@@ -108,13 +108,13 @@ const updateUser = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(ERROR_CODE_404).json({ message: "User not found" });
+      return res.status(NotFoundError).json({ message: "User not found" });
     }
 
     return res.json(user);
   } catch (e) {
     return res
-      .status(ERROR_CODE_500)
+      .status(InternalServerError)
       .json({ message: "An error occurred on the server" });
   }
 };
@@ -130,7 +130,7 @@ const login = (req, res) => {
       res.send({ token });
     })
     .catch((error) => {
-      res.status(ERROR_CODE_401).send({ message: error.message });
+      res.status(UnauthorizedError).send({ message: error.message });
     });
 };
 
