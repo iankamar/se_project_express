@@ -1,9 +1,9 @@
 const clothingItem = require("../models/clothingItem");
 const {
-  ERROR_CODE_400,
-  ERROR_CODE_403,
-  ERROR_CODE_404,
-  ERROR_CODE_500,
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+  InternalServerError,
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
@@ -18,10 +18,10 @@ const createItem = (req, res) => {
       );
 
       if (error.name === "ValidationError") {
-        return res.status(ERROR_CODE_400).json({ message: error.message });
+        return res.status(BadRequestError).json({ message: error.message });
       }
       return res
-        .status(ERROR_CODE_500)
+        .status(InternalServerError)
         .json({ message: "An error occurred on the server" });
     });
 };
@@ -37,11 +37,11 @@ const getItems = (req, res) => {
       );
 
       if (error.name === "CastError") {
-        return res.status(ERROR_CODE_400).json({ message: error.message });
+        return res.status(BadRequestError).json({ message: error.message });
       }
 
       return res
-        .status(ERROR_CODE_500)
+        .status(InternalServerError)
         .json({ message: "An error occurred on the server" });
     });
 };
@@ -58,7 +58,7 @@ const deleteItem = (req, res) => {
       }
 
       if (item.owner.toString() !== userId) {
-        return res.status(ERROR_CODE_403).json({
+        return res.status(ForbiddenError).json({
           message: "Forbidden: You do not have permission to delete this item",
         });
       }
@@ -72,14 +72,14 @@ const deleteItem = (req, res) => {
       );
 
       if (error.message === "Item not found") {
-        return res.status(ERROR_CODE_404).json({ message: error.message });
+        return res.status(NotFoundError).json({ message: error.message });
       }
       if (error.name === "CastError") {
-        return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
+        return res.status(BadRequestError).json({ message: "Invalid ID" });
       }
 
       return res
-        .status(ERROR_CODE_500)
+        .status(InternalServerError)
         .json({ message: "An error occurred on the server" });
     });
 };
@@ -100,14 +100,14 @@ const likeItem = (req, res) => {
       );
 
       if (error.message === "Item not found") {
-        return res.status(ERROR_CODE_404).json({ message: error.message });
+        return res.status(NotFoundError).json({ message: error.message });
       }
       if (error.name === "CastError") {
-        return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
+        return res.status(BadRequestError).json({ message: "Invalid ID" });
       }
 
       return res
-        .status(ERROR_CODE_500)
+        .status(InternalServerError)
         .json({ message: "An error occurred on the server" });
     });
 };
@@ -128,14 +128,14 @@ const dislikeItem = (req, res) => {
       );
 
       if (error.message === "Item not found") {
-        return res.status(ERROR_CODE_404).json({ message: error.message });
+        return res.status(NotFoundError).json({ message: error.message });
       }
       if (error.name === "CastError") {
-        return res.status(ERROR_CODE_400).json({ message: "Invalid ID" });
+        return res.status(BadRequestError).json({ message: "Invalid ID" });
       }
 
       return res
-        .status(ERROR_CODE_500)
+        .status(InternalServerError)
         .json({ message: "An error occurred on the server" });
     });
 };
