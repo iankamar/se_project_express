@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const router = require("./routes");
+const errorHandler = require("./middlewares/error-handler");
 
 const { PORT = 3001 } = process.env;
 const app = express();
@@ -32,6 +33,8 @@ app.use(
 );
 
 app.use(router);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);
