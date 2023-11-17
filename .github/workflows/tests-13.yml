@@ -15,7 +15,7 @@ jobs:
       sprint: ${{ steps.sprint.outputs.SPRINT_NUMBER }}
     steps:
     - name: Set up GitHub Actions
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Check if sprint file exist
       run: bash .github/bin/check-sprint.sh
     - name: Get sprint number
@@ -30,7 +30,7 @@ jobs:
     if: ${{ needs.read_sprint_file.outputs.sprint == '13' }}
     steps:
     - name: Set up GitHub Actions
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Use Node.js 18.x
       uses: actions/setup-node@v1
       with:
@@ -48,7 +48,7 @@ jobs:
     if: ${{ needs.read_sprint_file.outputs.sprint == '13' }}
     steps:
     - name: Set up GitHub Actions
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Use Node.js 18.x
       uses: actions/setup-node@v1
       with:
