@@ -11,8 +11,6 @@ on:
 jobs:
   read_sprint_file:
     runs-on: ubuntu-latest
-    env:
-     ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
     - name: Set up GitHub Actions
       uses: actions/checkout@v3
