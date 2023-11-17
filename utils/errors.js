@@ -1,4 +1,12 @@
-class SuccessError extends Error {
+class CustomError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
+    this.isOperational = true;
+  }
+}
+class SuccessError extends CustomError {
   constructor(message) {
     super(message);
     this.name = "SuccessError";
@@ -6,7 +14,7 @@ class SuccessError extends Error {
   }
 }
 
-class BadRequestError extends Error {
+class BadRequestError extends CustomError {
   constructor(message) {
     super(message);
     this.name = "BadRequestError";
@@ -14,7 +22,7 @@ class BadRequestError extends Error {
   }
 }
 
-class UnauthorizedError extends Error {
+class UnauthorizedError extends CustomError {
   constructor(message) {
     super(message);
     this.name = "UnauthorizedError";
@@ -22,7 +30,7 @@ class UnauthorizedError extends Error {
   }
 }
 
-class ForbiddenError extends Error {
+class ForbiddenError extends CustomError {
   constructor(message) {
     super(message);
     this.name = "ForbiddenError";
@@ -30,7 +38,7 @@ class ForbiddenError extends Error {
   }
 }
 
-class NotFoundError extends Error {
+class NotFoundError extends CustomError {
   constructor(message) {
     super(message);
     this.name = "NotFoundError";
@@ -38,14 +46,14 @@ class NotFoundError extends Error {
   }
 }
 
-class ConflictError extends Error {
+class ConflictError extends CustomError {
   constructor(message) {
     super(message);
     this.name = "ConflictError";
     this.statusCode = 409;
   }
 }
-class InternalServerError extends Error {
+class InternalServerError extends CustomError {
   constructor(message) {
     super(message);
     this.name = "InternalServerError";
