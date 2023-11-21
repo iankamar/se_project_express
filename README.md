@@ -27,3 +27,9 @@ Use the following commands to run the project:
 - `npm run start` — Launches the server.
 - `npm run dev` — Launches the server with the hot reload feature.
 
+## Accessing the Application
+
+To access the application, use the following domain:
+
+Frontend domain: https://www.iankamar-wtwr.cbu.net
+Backend domain: https://api.iankamar-wtwr.cbu.net
