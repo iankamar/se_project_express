@@ -31,5 +31,5 @@ Use the following commands to run the project:
 
 To access the application, use the following domain:
 
-Frontend domain: https://www.iankamar-wtwr.cbu.net
-Backend domain: https://api.iankamar-wtwr.cbu.net
+- Frontend domain: https://www.iankamar-wtwr.cbu.net
+- Backend domain: https://api.iankamar-wtwr.cbu.net
