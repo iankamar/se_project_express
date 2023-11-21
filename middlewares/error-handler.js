@@ -23,7 +23,7 @@ const errorHandler = (err, req, res, next) => {
   console.log("Middleware Error Handling");
   console.log("Error object:", err);
 
-  const errorStatus = err.statusCode || InternalServerError;
+  const errorStatus = err.statusCode || InternalServerError.statusCode;
   console.log("Resolved status code:", errorStatus);
 
   const errorMessage = err.message || "Something went wrong";
