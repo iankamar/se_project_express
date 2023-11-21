@@ -31,5 +31,4 @@ Use the following commands to run the project:
 
 To access the application, use the following domain:
 
-- Frontend domain: [Ian Kamar Wtwr Frontend](https://www.iankamar-wtwr.cbu.net)
-- Backend domain: [Ian Kamar Wtwr API](https://api.iankamar-wtwr.cbu.net)
+- Domain: [Ian Kamar WTWR](https://www.iankamar-wtwr.cbu.net)
