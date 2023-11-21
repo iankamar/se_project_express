@@ -12,6 +12,8 @@ router.use("/items", clothingItem);
 
 router.use((req, res) => {
   res.status(NotFoundError).send({
+    success: false,
+    status: NotFoundError.statusCode,
     message: `The requested resource ${req.path} does not exist on this server.`,
   });
 });
