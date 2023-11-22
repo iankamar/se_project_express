@@ -32,15 +32,13 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
-app.use(cors({ origin: "*" }));
-/*
 app.use(
   cors({
     credentials: true,
     origin: ["http://localhost:3000"],
   }),
 );
-*/
+
 app.get("/crash-test", () => {
   setTimeout(() => {
     throw new Error("Server will crash now");
