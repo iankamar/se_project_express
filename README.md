@@ -31,4 +31,5 @@ Use the following commands to run the project:
 
 To access the application, use the following domain:
 
-- Domain: [Ian Kamar WTWR](https://www.iankamar-wtwr.cbu.net)
+- Domain: [Ian Kamar WTWR](https://www.iankamar-wtwr.cbu.net)    
+- Note to reviewer-(The application displays Request URL: https://api.iankamar-wtwr.cbu.net/signup on the visual studio code but using the following link). My baseUrl is https://api.iankamar-wtwr.cbu.net.
