@@ -1,14 +1,12 @@
 const clothingItem = require("../models/clothingItem");
-
 const BadRequestError = require("../errors/BadRequestError");
 const ForbiddenError = require("../errors/ForbiddenError");
 const NotFoundError = require("../errors/NotFoundError");
 
 const createItem = (req, res, next) => {
-  const { name, weather, link } = req.body;
-
+  const { name, weather, imageUrl } = req.body;
   clothingItem
-    .create({ name, weather, link, owner: req.user._id })
+    .create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => res.json({ data: item }))
     .catch((error) => {
       console.error(
@@ -16,9 +14,10 @@ const createItem = (req, res, next) => {
       );
 
       if (error.name === "ValidationError") {
-        throw new BadRequestError(error.message);
+        next(new BadRequestError(error.message));
+      } else {
+        next(error);
       }
-      next(error);
     });
 };
 
@@ -33,9 +32,10 @@ const getItems = (req, res, next) => {
       );
 
       if (error.name === "CastError") {
-        throw new BadRequestError(error.message);
+        next(new BadRequestError(error.message));
+      } else {
+        next(error);
       }
-      next(error);
     });
 };
 
@@ -47,7 +47,7 @@ const deleteItem = (req, res, next) => {
     .findById(itemId)
     .then((item) => {
       if (!item) {
-        throw new Error("Item not found");
+        throw new NotFoundError("Item not found");
       }
       if (item.owner.toString() !== userId) {
         throw new ForbiddenError(
@@ -63,12 +63,12 @@ const deleteItem = (req, res, next) => {
       );
 
       if (error.message === "Item not found") {
-        throw new NotFoundError(error.message);
+        next(new NotFoundError(error.message));
+      } else if (error.name === "CastError") {
+        next(new BadRequestError("Invalid ID"));
+      } else {
+        next(error);
       }
-      if (error.name === "CastError") {
-        throw new BadRequestError("Invalid ID");
-      }
-      next(error);
     });
 };
 
@@ -80,7 +80,7 @@ const likeItem = (req, res, next) => {
 
   clothingItem
     .findByIdAndUpdate(itemId, { $addToSet: { likes: userId } }, { new: true })
-    .orFail(new Error("Item not found"))
+    .orFail(() => new NotFoundError("Item not found"))
     .then((item) => res.json(item))
     .catch((error) => {
       console.error(
@@ -88,12 +88,12 @@ const likeItem = (req, res, next) => {
       );
 
       if (error.message === "Item not found") {
-        throw new NotFoundError(error.message);
+        next(new NotFoundError(error.message));
+      } else if (error.name === "CastError") {
+        next(new BadRequestError("Invalid ID"));
+      } else {
+        next(error);
       }
-      if (error.name === "CastError") {
-        throw new BadRequestError("Invalid ID");
-      }
-      next(error);
     });
 };
 
@@ -105,19 +105,20 @@ const dislikeItem = (req, res, next) => {
 
   clothingItem
     .findByIdAndUpdate(itemId, { $pull: { likes: userId } }, { new: true })
-    .orFail(new Error("Item not found"))
+    .orFail(() => new NotFoundError("Item not found"))
     .then((item) => res.json(item))
     .catch((error) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
       );
+
       if (error.message === "Item not found") {
-        throw new NotFoundError(error.message);
+        next(new NotFoundError(error.message));
+      } else if (error.name === "CastError") {
+        next(new BadRequestError("Invalid ID"));
+      } else {
+        next(error);
       }
-      if (error.name === "CastError") {
-        throw new BadRequestError("Invalid ID");
-      }
-      next(error);
     });
 };
 
