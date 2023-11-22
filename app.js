@@ -45,10 +45,10 @@ app.get("/crash-test", () => {
   }, 0);
 });
 
+app.use(requestLogger);
 app.post("/signin", validateAuthentication, login);
 app.post("/signup", validateUserCreation, signup);
 
-app.use(requestLogger);
 app.use(routes);
 
 app.use(errorLogger);
