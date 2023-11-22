@@ -1,21 +1,17 @@
 const router = require("express").Router();
 const users = require("./users");
 const clothingItem = require("./clothingItem");
-const { NotFoundError } = require("../utils/errors");
+const { NotFoundError } = require("../errors/NotFoundError");
 
-const { login, signup } = require("../controllers/users");
-
-router.post("/signin", login);
-router.post("/signup", signup);
 router.use("/users", users);
 router.use("/items", clothingItem);
 
-router.use((req, res) => {
-  res.status(NotFoundError).send({
-    success: false,
-    status: NotFoundError.statusCode,
-    message: `The requested resource ${req.path} does not exist on this server.`,
-  });
+router.use((req, res, next) => {
+  next(
+    new NotFoundError(
+      `The requested resource ${req.path} does not exist on this server.`,
+    ),
+  );
 });
 
 module.exports = router;

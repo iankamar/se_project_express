@@ -1,12 +1,10 @@
 const clothingItem = require("../models/clothingItem");
-const {
-  BadRequestError,
-  ForbiddenError,
-  NotFoundError,
-  InternalServerError,
-} = require("../utils/errors");
 
-const createItem = (req, res) => {
+const BadRequestError = require("../errors/BadRequestError");
+const ForbiddenError = require("../errors/ForbiddenError");
+const NotFoundError = require("../errors/NotFoundError");
+
+const createItem = (req, res, next) => {
   const { name, weather, link } = req.body;
 
   clothingItem
@@ -18,15 +16,13 @@ const createItem = (req, res) => {
       );
 
       if (error.name === "ValidationError") {
-        return res.status(BadRequestError).json({ message: error.message });
+        throw new BadRequestError(error.message);
       }
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
+      next(error);
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   clothingItem
     .find({})
     .sort({ createdAt: -1 })
@@ -37,16 +33,13 @@ const getItems = (req, res) => {
       );
 
       if (error.name === "CastError") {
-        return res.status(BadRequestError).json({ message: error.message });
+        throw new BadRequestError(error.message);
       }
-
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
+      next(error);
     });
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
 
@@ -56,13 +49,11 @@ const deleteItem = (req, res) => {
       if (!item) {
         throw new Error("Item not found");
       }
-
       if (item.owner.toString() !== userId) {
-        return res.status(ForbiddenError).json({
-          message: "Forbidden: You do not have permission to delete this item",
-        });
+        throw new ForbiddenError(
+          "Forbidden: You do not have permission to delete this item",
+        );
       }
-
       return clothingItem.deleteOne({ _id: itemId });
     })
     .then(() => res.send({ message: "Item deleted" }))
@@ -72,19 +63,16 @@ const deleteItem = (req, res) => {
       );
 
       if (error.message === "Item not found") {
-        return res.status(NotFoundError).json({ message: error.message });
+        throw new NotFoundError(error.message);
       }
       if (error.name === "CastError") {
-        return res.status(BadRequestError).json({ message: "Invalid ID" });
+        throw new BadRequestError("Invalid ID");
       }
-
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
+      next(error);
     });
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
   console.log(itemId);
@@ -100,19 +88,16 @@ const likeItem = (req, res) => {
       );
 
       if (error.message === "Item not found") {
-        return res.status(NotFoundError).json({ message: error.message });
+        throw new NotFoundError(error.message);
       }
       if (error.name === "CastError") {
-        return res.status(BadRequestError).json({ message: "Invalid ID" });
+        throw new BadRequestError("Invalid ID");
       }
-
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
+      next(error);
     });
 };
 
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
   console.log(itemId);
@@ -126,17 +111,13 @@ const dislikeItem = (req, res) => {
       console.error(
         `Error ${error.name} with the message ${error.message} has occurred while executing the code`,
       );
-
       if (error.message === "Item not found") {
-        return res.status(NotFoundError).json({ message: error.message });
+        throw new NotFoundError(error.message);
       }
       if (error.name === "CastError") {
-        return res.status(BadRequestError).json({ message: "Invalid ID" });
+        throw new BadRequestError("Invalid ID");
       }
-
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
+      next(error);
     });
 };
 

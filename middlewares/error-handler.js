@@ -1,4 +1,4 @@
-const { InternalServerError } = require("../utils/errors");
+const { InternalServerError } = require("../errors/InternalServerError");
 
 const errorHandler = (err, req, res, next) => {
   console.log("Middleware Error Handling");
@@ -6,10 +6,7 @@ const errorHandler = (err, req, res, next) => {
   const errorMessage = err.message || "Something went wrong";
 
   res.status(errorStatus).json({
-    success: false,
-    status: errorStatus,
     message: errorMessage,
-    stack: process.env.NODE_ENV === "development" ? err.stack : {},
   });
 };
 

@@ -2,46 +2,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/users");
 
-const {
-  BadRequestError,
-  UnauthorizedError,
-  NotFoundError,
-  ConflictError,
-  InternalServerError,
-} = require("../utils/errors");
+const BadRequestError = require("../errors/BadRequestError");
+const UnauthorizedError = require("../errors/UnauthorizedError");
+const NotFoundError = require("../errors/NotFoundError");
+const ConflictError = require("../errors/ConflictError");
+
 const { JWT_SECRET } = require("../utils/config");
 
-const getUsers = (req, res) => {
-  User.find()
-    .then((users) => res.json(users))
-    .catch(() =>
-      res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" }),
-    );
-};
-
-const getUser = (req, res) => {
-  const { id } = req.params;
-
-  User.findById(id)
-    .then((user) => {
-      if (!user) {
-        return res.status(NotFoundError).json({ message: "User not found" });
-      }
-      return res.json(user);
-    })
-    .catch((error) => {
-      if (error.name === "CastError") {
-        return res.status(BadRequestError).json({ message: "Invalid id" });
-      }
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
-    });
-};
-
-const signup = (req, res) => {
+const signup = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   if (!email) {
     res.status(BadRequestError).json({ message: "Email is required" });
@@ -68,55 +36,50 @@ const signup = (req, res) => {
               )
               .catch((error) => {
                 if (error.name === "ValidationError") {
-                  res.status(BadRequestError).json({ message: error.message });
-                } else {
-                  res
-                    .status(InternalServerError)
-                    .json({ message: "An error occurred on the server" });
+                  throw new BadRequestError(error.message);
                 }
+                next(error);
               });
           });
         }
       })
-      .catch(() =>
-        res
-          .status(InternalServerError)
-          .json({ message: "An error occurred on the server" }),
-      );
+      .catch(next);
   }
 };
 
-const getCurrentUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      return res.status(NotFoundError).json({ message: "User not found" });
-    }
-    return res.json(user);
-  } catch (e) {
-    return res
-      .status(InternalServerError)
-      .json({ message: "An error occurred on the server" });
-  }
-};
-
-const updateUser = async (req, res) => {
-  try {
-    const user = await User.findByIdAndUpdate(req.user._id, req.body, {
-      new: true,
-      runValidators: true,
+const getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError("User not found");
+      }
+      return res.json(user);
+    })
+    .catch((error) => {
+      if (error.name === "ValidationError") {
+        throw new BadRequestError(error.message);
+      }
+      next(error);
     });
+};
 
-    if (!user) {
-      return res.status(NotFoundError).json({ message: "User not found" });
-    }
-
-    return res.json(user);
-  } catch (e) {
-    return res
-      .status(InternalServerError)
-      .json({ message: "An error occurred on the server" });
-  }
+const updateUser = (req, res, next) => {
+  User.findByIdAndUpdate(req.user._id, req.body, {
+    new: true,
+    runValidators: true,
+  })
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError("User not found");
+      }
+      return res.json(user);
+    })
+    .catch((error) => {
+      if (error.name === "ValidationError") {
+        throw new BadRequestError(error.message);
+      }
+      next(error);
+    });
 };
 
 const login = (req, res) => {
@@ -130,13 +93,11 @@ const login = (req, res) => {
       res.send({ token });
     })
     .catch((error) => {
-      res.status(UnauthorizedError).send({ message: error.message });
+      throw new UnauthorizedError(error.message);
     });
 };
 
 module.exports = {
-  getUsers,
-  getUser,
   signup,
   getCurrentUser,
   updateUser,

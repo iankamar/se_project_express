@@ -5,7 +5,6 @@ const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
-const router = require("./routes");
 const errorHandler = require("./middlewares/error-handler");
 const routes = require("./routes");
 const {
@@ -49,11 +48,11 @@ app.get("/crash-test", () => {
 app.post("/signin", validateAuthentication, login);
 app.post("/signup", validateUserCreation, signup);
 
-app.use(errors());
 app.use(requestLogger);
-app.use(router);
 app.use(routes);
+
 app.use(errorLogger);
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
