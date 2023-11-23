@@ -32,5 +32,3 @@ Use the following commands to run the project:
 To access the application, use the following domain:
 
 - Domain: [Ian Kamar WTWR](https://www.iankamar-wtwr.cbu.net)
-
-- Note to reviewer-( I changed the API address in my front end application. My baseUrl is https://api.iankamar-wtwr.cbu.net. https://github.com/iankamar/se_project_react/blob/main/src/utils/api.js
