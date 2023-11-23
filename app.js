@@ -5,9 +5,13 @@ const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
-const router = require("./routes");
 const errorHandler = require("./middlewares/error-handler");
 const routes = require("./routes");
+const {
+  validateAuthentication,
+  validateUserCreation,
+} = require("./middlewares/validation");
+const { signup, login } = require("./controllers/users");
 
 const { PORT = 3001 } = process.env;
 const app = express();
@@ -35,11 +39,20 @@ app.use(
   }),
 );
 
-app.use(errors());
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
+
 app.use(requestLogger);
-app.use(router);
+app.post("/signin", validateAuthentication, login);
+app.post("/signup", validateUserCreation, signup);
+
 app.use(routes);
+
 app.use(errorLogger);
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {

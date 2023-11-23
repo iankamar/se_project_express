@@ -1,16 +1,12 @@
 const clothingItem = require("../models/clothingItem");
-const {
-  BadRequestError,
-  ForbiddenError,
-  NotFoundError,
-  InternalServerError,
-} = require("../utils/errors");
+const BadRequestError = require("../errors/BadRequestError");
+const ForbiddenError = require("../errors/ForbiddenError");
+const NotFoundError = require("../errors/NotFoundError");
 
-const createItem = (req, res) => {
-  const { name, weather, link } = req.body;
-
+const createItem = (req, res, next) => {
+  const { name, weather, imageUrl } = req.body;
   clothingItem
-    .create({ name, weather, link, owner: req.user._id })
+    .create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => res.json({ data: item }))
     .catch((error) => {
       console.error(
@@ -18,15 +14,14 @@ const createItem = (req, res) => {
       );
 
       if (error.name === "ValidationError") {
-        return res.status(BadRequestError).json({ message: error.message });
+        next(new BadRequestError(error.message));
+      } else {
+        next(error);
       }
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   clothingItem
     .find({})
     .sort({ createdAt: -1 })
@@ -37,16 +32,14 @@ const getItems = (req, res) => {
       );
 
       if (error.name === "CastError") {
-        return res.status(BadRequestError).json({ message: error.message });
+        next(new BadRequestError(error.message));
+      } else {
+        next(error);
       }
-
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
     });
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
 
@@ -54,15 +47,13 @@ const deleteItem = (req, res) => {
     .findById(itemId)
     .then((item) => {
       if (!item) {
-        throw new Error("Item not found");
+        throw new NotFoundError("Item not found");
       }
-
       if (item.owner.toString() !== userId) {
-        return res.status(ForbiddenError).json({
-          message: "Forbidden: You do not have permission to delete this item",
-        });
+        throw new ForbiddenError(
+          "Forbidden: You do not have permission to delete this item",
+        );
       }
-
       return clothingItem.deleteOne({ _id: itemId });
     })
     .then(() => res.send({ message: "Item deleted" }))
@@ -72,19 +63,16 @@ const deleteItem = (req, res) => {
       );
 
       if (error.message === "Item not found") {
-        return res.status(NotFoundError).json({ message: error.message });
+        next(new NotFoundError(error.message));
+      } else if (error.name === "CastError") {
+        next(new BadRequestError("Invalid ID"));
+      } else {
+        next(error);
       }
-      if (error.name === "CastError") {
-        return res.status(BadRequestError).json({ message: "Invalid ID" });
-      }
-
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
     });
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
   console.log(itemId);
@@ -92,7 +80,7 @@ const likeItem = (req, res) => {
 
   clothingItem
     .findByIdAndUpdate(itemId, { $addToSet: { likes: userId } }, { new: true })
-    .orFail(new Error("Item not found"))
+    .orFail(() => new NotFoundError("Item not found"))
     .then((item) => res.json(item))
     .catch((error) => {
       console.error(
@@ -100,19 +88,16 @@ const likeItem = (req, res) => {
       );
 
       if (error.message === "Item not found") {
-        return res.status(NotFoundError).json({ message: error.message });
+        next(new NotFoundError(error.message));
+      } else if (error.name === "CastError") {
+        next(new BadRequestError("Invalid ID"));
+      } else {
+        next(error);
       }
-      if (error.name === "CastError") {
-        return res.status(BadRequestError).json({ message: "Invalid ID" });
-      }
-
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
     });
 };
 
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
   console.log(itemId);
@@ -120,7 +105,7 @@ const dislikeItem = (req, res) => {
 
   clothingItem
     .findByIdAndUpdate(itemId, { $pull: { likes: userId } }, { new: true })
-    .orFail(new Error("Item not found"))
+    .orFail(() => new NotFoundError("Item not found"))
     .then((item) => res.json(item))
     .catch((error) => {
       console.error(
@@ -128,15 +113,12 @@ const dislikeItem = (req, res) => {
       );
 
       if (error.message === "Item not found") {
-        return res.status(NotFoundError).json({ message: error.message });
+        next(new NotFoundError(error.message));
+      } else if (error.name === "CastError") {
+        next(new BadRequestError("Invalid ID"));
+      } else {
+        next(error);
       }
-      if (error.name === "CastError") {
-        return res.status(BadRequestError).json({ message: "Invalid ID" });
-      }
-
-      return res
-        .status(InternalServerError)
-        .json({ message: "An error occurred on the server" });
     });
 };
 
