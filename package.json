@@ -33,5 +33,14 @@
     "eslint-plugin-import": "^2.28.1",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iankamar/se_project_express.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/iankamar/se_project_express/issues"
+  },
+  "homepage": "https://github.com/iankamar/se_project_express#readme"
 }
