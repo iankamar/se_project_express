@@ -13,7 +13,9 @@ router.patch(
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
-      avatar: Joi.string().custom(validateURL),
+      avatar: Joi.string().custom((value, helpers) =>
+        validateURL(value, helpers),
+      ),
     }),
   }),
   updateUser,
