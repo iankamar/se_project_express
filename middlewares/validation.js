@@ -1,12 +1,12 @@
 // middleware/validation.js
 const { celebrate, Joi } = require("celebrate");
-const validator = require("validator");
 
 const validateURL = (value, helpers) => {
-  if (validator.isURL(value)) {
-    return value;
+  const urlPattern = /^https?:\/\/[^\s/$.?#].[^\s]*$/;
+  if (!urlPattern.test(value)) {
+    return helpers.error("string.uri");
   }
-  return helpers.error("string.uri");
+  return value;
 };
 
 const validateCardBody = celebrate({

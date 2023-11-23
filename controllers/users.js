@@ -6,7 +6,7 @@ const UnauthorizedError = require("../errors/UnauthorizedError");
 const NotFoundError = require("../errors/NotFoundError");
 const ConflictError = require("../errors/ConflictError");
 const { JWT_SECRET } = require("../utils/config");
-const errorHandler = require("../middlewares/error-handler");
+// const errorHandler = require("../middlewares/error-handler");
 
 const signup = async (req, res, next) => {
   try {
@@ -33,7 +33,11 @@ const signup = async (req, res, next) => {
       email: newUser.email,
     });
   } catch (error) {
-    errorHandler(error, next);
+    if (error.name === "ValidationError") {
+      next(new BadRequestError("Invalid data"));
+    } else {
+      next(error);
+    }
   }
 };
 
@@ -46,7 +50,11 @@ const getCurrentUser = async (req, res, next) => {
     }
     res.json(user);
   } catch (error) {
-    errorHandler(error, next);
+    if (error.name === "CastError") {
+      next(new BadRequestError("Invalid data"));
+    } else {
+      next(error);
+    }
   }
 };
 
@@ -64,7 +72,11 @@ const updateUser = async (req, res, next) => {
 
     res.json(user);
   } catch (error) {
-    errorHandler(error, next);
+    if (error.name === "ValidationError") {
+      next(new BadRequestError("Invalid data"));
+    } else {
+      next(error);
+    }
   }
 };
 
@@ -78,7 +90,6 @@ const login = async (req, res, next) => {
     });
     res.send({ token });
   } catch (error) {
-    errorHandler(error, next);
     next(new UnauthorizedError(error.message));
   }
 };
