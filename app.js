@@ -35,7 +35,7 @@ app.use(limiter);
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:3000"],
+    origin: ["https://www.iankamar-wtwr.cbu.net"],
   }),
 );
 
