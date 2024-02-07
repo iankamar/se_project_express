@@ -3,7 +3,7 @@
 This project is focused on creating a server for the WTWR (What to Wear?) application. The goal is to create a server with an API and user authorization, providing a deeper understanding of working with databases, setting up security and testing, and deploying web applications on a remote machine.
 <img width="897" alt="WTWR A" src="https://github.com/iankamar/se_project_express/assets/95672055/97a99d15-555f-4063-a3ba-bb0c7b0ca7ca">
 <img width="897" alt="WTWR B" src="https://github.com/iankamar/se_project_express/assets/95672055/012fde9c-ac21-423d-bbb3-a14d6168ed36">
-<img width="864" alt="WTWR C" src="https://github.com/iankamar/se_project_express/assets/95672055/42d8a312-6c16-4bfa-aa04-a52c299d589c">
+<img width="814" alt="WTWR D" src="https://github.com/iankamar/se_project_express/assets/95672055/fdbb936e-1f84-4ff7-9f4f-d41cd1b46284">
 
 ## Project Functionality
 
