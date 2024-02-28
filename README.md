@@ -35,4 +35,4 @@ Use the following commands to run the project:
 
 To access the application, use the following domain:
 
-- Domain: [Ian Kamar WTWR](https://www.iankamar-wtwr.cbu.net)
+- Domain: [Ian Kamar WTWR](https://iankamar-wtwr.azurewebsites.net)
