@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const { errors } = require("celebrate");
+const path = require("path");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 const errorHandler = require("./middlewares/error-handler");
 const routes = require("./routes");
@@ -15,6 +16,10 @@ const { signup, login } = require("./controllers/users");
 
 const { PORT = 3001 } = process.env;
 const app = express();
+
+// Serve favicon.ico
+app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.ico')));
+
 /*
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
