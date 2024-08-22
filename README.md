@@ -30,14 +30,9 @@ Use the following commands to run the project:
 
 - `npm run start` — Launches the server.
 - `npm run dev` — Launches the server with the hot reload feature.
-<!--
+
 ## Accessing the Application
 
 To access the application, use the following domain:
 
-<<<<<<< HEAD
 - Domain: [Ian Kamar WTWR](https://se-project-react.vercel.app/)
-=======
-- Domain: [Ian Kamar WTWR](https://iankamar-wtwr.azurewebsites.net)
---!>
->>>>>>> e5e67b51a4c1c75f58da2dfda1c4f9a0d1c4beb6
