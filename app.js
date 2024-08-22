@@ -15,9 +15,17 @@ const { signup, login } = require("./controllers/users");
 
 const { PORT = 3001 } = process.env;
 const app = express();
-
+/*
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
+  .then(() => console.log("connected to DB"))
+  .catch((e) => console.log("DB error", e));
+*/
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("connected to DB"))
   .catch((e) => console.log("DB error", e));
 
