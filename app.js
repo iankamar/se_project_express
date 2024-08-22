@@ -14,9 +14,10 @@ const {
 } = require("./middlewares/validation");
 const { signup, login } = require("./controllers/users");
 
-const { PORT = 3001 } = process.env;
+const { PORT = 3001, MONGODB_URI } = process.env;
 const app = express();
 
+// Static file serving
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Route for the root path
@@ -24,22 +25,13 @@ app.get('/', (req, res) => {
   res.send('Welcome to the server!');
 });
 
-app.listen(3001, () => {
-  console.log('Server is running on port 3001');
-});
-
-/*
+// Database connection
 mongoose
-  .connect("mongodb://127.0.0.1:27017/wtwr_db")
-  .then(() => console.log("connected to DB"))
-  .catch((e) => console.log("DB error", e));
-*/
-mongoose
-  .connect(process.env.MONGODB_URI, {
+  .connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("connected to DB"))
+  .then(() => console.log("Connected to DB"))
   .catch((e) => console.log("DB error", e));
 
 app.use(express.json());
@@ -58,8 +50,7 @@ app.use(limiter);
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:3000",
-    "https://se-project-react.vercel.app/"],
+    origin: ["http://localhost:3000", "https://se-project-react.vercel.app"],
   }),
 );
 
@@ -79,6 +70,7 @@ app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 
+// Start server
 app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);
 });
