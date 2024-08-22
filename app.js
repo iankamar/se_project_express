@@ -34,6 +34,8 @@ app.use(express.json());
 // Security headers
 app.use(helmet());
 
+app.set('trust proxy', 1);
+
 // Rate limit to all requests
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
