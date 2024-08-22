@@ -18,6 +18,16 @@ const { PORT = 3001 } = process.env;
 const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Route for the root path
+app.get('/', (req, res) => {
+  res.send('Welcome to the server!');
+});
+
+app.listen(3001, () => {
+  console.log('Server is running on port 3001');
+});
+
 /*
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
