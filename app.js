@@ -50,7 +50,10 @@ app.use(limiter);
 app.use(
   cors({
     credentials: true,
+    origin:"https://se-project-react.vercel.app",
+    /*
     origin: ["http://localhost:3000", "https://se-project-react.vercel.app"],
+    */
   }),
 );
 
