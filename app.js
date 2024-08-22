@@ -17,8 +17,8 @@ const { signup, login } = require("./controllers/users");
 const { PORT = 3001 } = process.env;
 const app = express();
 
-// Serve favicon.ico
-app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 /*
 mongoose
