@@ -36,19 +36,9 @@ app.use(
   cors({
     credentials: true,
     origin: ["http://localhost:3000",
-    "https://iankamar-wtwr.azurewebsites.net"],
+    "https://se-project-react.vercel.app/"],
   }),
 );
-
-/*
-app.use(limiter);
-app.use(
-  cors({
-    credentials: true,
-    origin: ["https://www.iankamar-wtwr.cbu.net"],
-  }),
-);
-*/
 
 app.get("/crash-test", () => {
   setTimeout(() => {
