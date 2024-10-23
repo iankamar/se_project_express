@@ -21,12 +21,20 @@ const app = express();
 app.use(helmet());
 
 // CORS configuration
+
+app.use(cors({
+  origin: 'https://se-project-react.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  
+  credentials: true, 
+}));
+
+/*
 app.use(cors({
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   origin: 'https://se-project-react.vercel.app',
   allowedHeaders: ['Content-Type', 'Authorization']
-}));
+})); */
 
 // Static file serving
 app.use(express.static(path.join(__dirname, 'public')));
