@@ -28,13 +28,8 @@ app.use(cors({
   credentials: true, 
 }));
 
-/*
-app.use(cors({
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  origin: 'https://se-project-react.vercel.app',
-  allowedHeaders: ['Content-Type', 'Authorization']
-})); */
+// allowedHeaders: ['Content-Type', 'Authorization']
+
 
 // Static file serving
 app.use(express.static(path.join(__dirname, 'public')));
