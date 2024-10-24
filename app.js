@@ -26,6 +26,7 @@ app.use(cors({
   origin: 'https://se-project-react.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  
   credentials: true, 
+  optionsSuccessStatus: 200,
 }));
 
 // allowedHeaders: ['Content-Type', 'Authorization']
@@ -64,7 +65,7 @@ app.get('/items', (req, res) => {
 });
 
 // Handle preflight requests (CORS preflight)
-app.options('*', cors());
+// app.options('*', cors());
 
 app.get("/crash-test", () => {
   setTimeout(() => {
